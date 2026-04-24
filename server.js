@@ -1,4 +1,4 @@
-// server.js（安定化パッチ v2）
+// server.js — Bot対策強化版 v3
 const express = require('express');
 const compression = require('compression');
 const morgan = require('morgan');
@@ -11,14 +11,13 @@ const Unblocker = require('unblocker');
 
 const app = express();
 
-// 基本ミドルウェア
 app.disable('x-powered-by');
 app.use(compression());
 app.use(morgan('tiny'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ---- アウトバウンドHTTP/HTTPS: Keep-Alive有効化 ----
+// ── Keep-Alive エージェント ──
 const httpAgent = new http.Agent({
   keepAlive: true,
   keepAliveMsecs: 10_000,
@@ -30,7 +29,27 @@ const httpsAgent = new https.Agent({
   maxSockets: 64
 });
 
-// ---- Unblocker 設定 ----
+// ── Bot対策: 本物のChrome 124ヘッダーセット ──
+// ブラウザが実際に送るヘッダーと完全に一致させることで
+// 「これはブラウザからの普通のアクセスだ」と認識させる
+const CHROME_HEADERS = {
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'accept-language': 'ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7',
+  'accept-encoding': 'gzip, deflate, br',
+  'sec-fetch-dest': 'document',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-site': 'none',
+  'sec-fetch-user': '?1',
+  'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'upgrade-insecure-requests': '1',
+  'connection': 'keep-alive',
+  'cache-control': 'max-age=0',
+};
+
+// ── Unblocker 設定 ──
 const config = {
   prefix: '/proxy/',
   processContentTypes: [
@@ -41,53 +60,66 @@ const config = {
   ],
   standardMiddleware: true,
 
-  // 上流へ出す直前の調整（ガード付き）
   requestMiddleware: [
     (data) => {
       try {
-        if (!data || !data.requestOptions) return; // ガード
+        if (!data || !data.requestOptions) return;
         const ro = data.requestOptions;
-
-        // ヘッダを必ずオブジェクト化
         ro.headers = ro.headers || {};
-        const h = ro.headers;
 
-        // ブラウザらしいUA/言語/圧縮
-        if (!h['user-agent']) {
-          h['user-agent'] =
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+        // ── 削除: プロキシがバレるヘッダー ──
+        // これらが残っていると「プロキシ経由だ」とバレてブロックされる
+        const badHeaders = [
+          'x-forwarded-for',
+          'x-forwarded-host',
+          'x-forwarded-proto',
+          'via',
+          'forwarded',
+          'proxy-connection',
+          'x-real-ip',
+        ];
+        for (const h of badHeaders) {
+          delete ro.headers[h];
+          delete ro.headers[h.toLowerCase()];
         }
-        if (!h['accept-language']) {
-          h['accept-language'] = 'ja-JP,ja;q=0.9,en-US;q=0.7,en;q=0.6';
+
+        // ── ブラウザ偽装ヘッダーを上書き適用 ──
+        for (const [k, v] of Object.entries(CHROME_HEADERS)) {
+          // すでにユーザーがセットしていても上書きする
+          ro.headers[k] = v;
         }
-        // 一部環境でbrが不安定な場合があるためまずはgzip/deflate
-        h['accept-encoding'] = 'gzip, deflate';
-        h['connection'] = 'keep-alive';
 
-        // プロトコル判定（無ければhttps扱い）
-        const isHttp =
-          ro.protocol === 'http:' ||
-          (data && data.protocol === 'http:');
+        // ── Refererを自動付与（「直接検索から来た」感を出す） ──
+        // refererがない場合、Googleから来たようにセット
+        if (!ro.headers['referer']) {
+          ro.headers['referer'] = 'https://www.google.com/';
+        }
 
-        // Keep-Aliveエージェント適用
+        // ── エージェント適用 ──
+        const isHttp = ro.protocol === 'http:' || (data && data.protocol === 'http:');
         ro.agent = isHttp ? httpAgent : httpsAgent;
-
-        // 過度なハングを防ぐタイムアウト
         if (!ro.timeout) ro.timeout = 30_000;
+
       } catch (e) {
         console.error('requestMiddleware error:', e && (e.code || e.message));
       }
     }
   ],
 
-  // レスポンス側の調整（CSP/Frame制限の緩和、動画シーク安定化）
   responseMiddleware: [
     (data) => {
       try {
         if (data && data.headers) {
+          // ── ブロック系ヘッダーを削除 ──
           delete data.headers['content-security-policy'];
+          delete data.headers['content-security-policy-report-only'];
           delete data.headers['x-frame-options'];
+          // ── HSTS削除（プロキシ越しだとエラーになることがある） ──
+          delete data.headers['strict-transport-security'];
+          // ── 古いXSS保護（誤作動の元）を削除 ──
+          delete data.headers['x-xss-protection'];
         }
+        // ── 動画シーク対応 ──
         if (data && data.clientRequest && data.clientRequest.headers) {
           const range = data.clientRequest.headers['range'];
           if (range && data.headers) data.headers['accept-ranges'] = 'bytes';
@@ -101,17 +133,17 @@ const config = {
 
 app.use(new Unblocker(config));
 
-// トップページ（フォーム）
+// ── トップページ ──
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 入力ハンドラ: URL か 検索語 → 常に /proxy/ へ
+// ── URL/検索語 → プロキシへ ──
 app.post('/go', (req, res) => {
   const input = (req.body.q || '').trim();
   if (!input) return res.redirect('/');
 
-  const isLikelyUrl = /^(https?:\/\/)/i.test(input) || /\./.test(input);
+  const isLikelyUrl = /^(https?:\/\/)/i.test(input) || (/\./.test(input) && !input.includes(' '));
   const target = isLikelyUrl
     ? (input.match(/^https?:\/\//i) ? input : `https://${input}`)
     : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
@@ -119,40 +151,42 @@ app.post('/go', (req, res) => {
   res.redirect(`${config.prefix}${target}`);
 });
 
-// 健康チェック
+// ── 死活監視 ──
 app.get('/healthz', (_req, res) => res.status(200).send('ok'));
 
-// ---- エラーハンドラ（ECONNRESET等をキャッチしやすく） ----
+// ── エラーハンドラ ──
 app.use((err, req, res, next) => {
-  console.error('proxy-error:', err && (err.code || err.message), err && err.stack ? `\n${err.stack}` : '');
+  console.error('proxy-error:', err && (err.code || err.message));
   if (res.headersSent) return next(err);
-  const isNetErr = err && (err.code === 'ECONNRESET' || err.code === 'ETIMEDOUT' || err.code === 'EAI_AGAIN');
+  const isNetErr = err && ['ECONNRESET','ETIMEDOUT','EAI_AGAIN','ENOTFOUND'].includes(err.code);
   res.status(isNetErr ? 502 : 500).send(`
     <!doctype html><meta charset="utf-8">
-    <title>一時的に接続できません</title>
-    <style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:32px;line-height:1.7;color:#223}
-    .card{max-width:720px;border:1px solid #e7ebf3;border-radius:14px;padding:20px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-    h1{font-size:18px;margin:0 0 10px}code{background:#f3f6fb;padding:2px 6px;border-radius:6px}</style>
+    <title>接続エラー — ProxyWave</title>
+    <style>
+      body{font-family:system-ui,sans-serif;background:#0d0d14;color:#f0eeff;display:grid;place-items:center;min-height:100vh;margin:0}
+      .card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:20px;padding:32px;max-width:500px;width:90%;text-align:center}
+      h1{font-size:18px;margin:0 0 12px;color:#a78bfa}
+      p{color:#8b8ba7;line-height:1.6;margin:0 0 16px}
+      code{background:rgba(167,139,250,0.1);padding:3px 8px;border-radius:6px;color:#a78bfa}
+      a{color:#60a5fa}
+    </style>
     <div class="card">
-      <h1>一時的に接続できませんでした。</h1>
-      <div>しばらく待って再読み込みしてください。対象サイトやネットワークの状況により、まれに発生します。</div>
-      <div style="margin-top:10px;color:#667">
-        エラー: <code>${(err && (err.code || err.message)) || 'unknown'}</code>
-      </div>
-      <div style="margin-top:14px"><a href="javascript:history.back()">← 前のページに戻る</a></div>
+      <h1>🌊 一時的に接続できませんでした</h1>
+      <p>対象サイトかネットワークの問題の可能性があります。<br>少し待ってから再試行してください。</p>
+      <p>エラーコード: <code>${(err && (err.code || err.message)) || 'unknown'}</code></p>
+      <a href="javascript:history.back()">← 戻る</a>
     </div>
   `);
 });
 
-// ---- サーバ起動（外向き待受 & タイムアウト調整） ----
+// ── サーバ起動 ──
 const PORT = process.env.PORT || 10000;
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Proxy running on http://localhost:${PORT}`);
+  console.log(`🌊 ProxyWave running on http://localhost:${PORT}`);
 });
 server.keepAliveTimeout = 61_000;
 server.headersTimeout   = 62_000;
 server.requestTimeout   = 60_000;
 
-// 予期せぬ例外もログ
 process.on('uncaughtException', (e) => console.error('uncaughtException', e));
 process.on('unhandledRejection', (e) => console.error('unhandledRejection', e));
