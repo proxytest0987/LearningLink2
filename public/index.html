@@ -3,437 +3,324 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>✦ ProxyWave</title>
-  <meta name="theme-color" content="#a78bfa" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <title>PROXIE — by 하루키</title>
+  <meta name="theme-color" content="#7c3aed" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap');
-
     :root {
-      --bg: #0d0d14;
+      --p1: #7c3aed; --p2: #a855f7; --p3: #ec4899;
+      --b1: #c084fc; --b2: #818cf8;
+      --bg: #0a0a0f;
       --card: rgba(255,255,255,0.04);
-      --border: rgba(255,255,255,0.09);
-      --text: #f0eeff;
-      --muted: #8b8ba7;
-      --p1: #a78bfa;
-      --p2: #60a5fa;
-      --p3: #f472b6;
-      --glow1: rgba(167,139,250,0.35);
-      --glow2: rgba(96,165,250,0.25);
+      --border: rgba(255,255,255,0.10);
+      --text: #f1f5f9; --muted: #94a3b8;
     }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      height: 100%;
+    body {
+      min-height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: 'Sora', ui-sans-serif, system-ui, sans-serif;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
       overflow-x: hidden;
     }
 
-    /* ── 背景グリッド ── */
+    /* ---- 背景アニメ ---- */
+    .bg-orbs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .orb1 { width: 600px; height: 600px; background: radial-gradient(circle, #7c3aed, transparent 70%); top: -200px; left: -200px; animation-duration: 20s; }
+    .orb2 { width: 500px; height: 500px; background: radial-gradient(circle, #ec4899, transparent 70%); bottom: -150px; right: -150px; animation-duration: 25s; animation-delay: -8s; }
+    .orb3 { width: 350px; height: 350px; background: radial-gradient(circle, #06b6d4, transparent 70%); top: 40%; left: 50%; transform: translate(-50%,-50%); animation-duration: 17s; animation-delay: -4s; opacity: .3; }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(30px, 40px) scale(1.05); }
+    }
+
+    /* ---- グリッドノイズ ---- */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0; z-index: 0;
       background-image:
-        linear-gradient(rgba(167,139,250,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(167,139,250,0.05) 1px, transparent 1px);
-      background-size: 48px 48px;
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
       pointer-events: none;
-      z-index: 0;
     }
 
-    /* ── 光のオーブ ── */
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(100px);
-      pointer-events: none;
-      z-index: 0;
-      animation: float 8s ease-in-out infinite;
-    }
-    .orb1 {
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(167,139,250,0.2), transparent 70%);
-      top: -150px; left: -100px;
-    }
-    .orb2 {
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(96,165,250,0.15), transparent 70%);
-      bottom: -100px; right: -80px;
-      animation-delay: -4s;
-    }
-    .orb3 {
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(244,114,182,0.12), transparent 70%);
-      top: 40%; left: 60%;
-      animation-delay: -2s;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) scale(1); }
-      50%       { transform: translateY(-30px) scale(1.05); }
-    }
-
-    /* ── レイアウト ── */
+    /* ---- レイアウト ---- */
     .page {
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 16px 60px;
     }
 
+    /* ---- ヘッダ ---- */
     header {
-      padding: 24px 28px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(16px);
+      width: 100%; max-width: 700px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 0 0;
     }
-
-    .logo-ring {
-      width: 42px; height: 42px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--p1), var(--p2));
-      display: grid;
-      place-items: center;
-      font-size: 22px;
-      box-shadow: 0 0 24px var(--glow1);
+    .logo-wrap { display: flex; align-items: center; gap: 10px; }
+    .logo-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--p1), var(--p3));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(124,58,237,.5);
     }
-
-    .brand-text h1 {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -.5px;
-      background: linear-gradient(90deg, var(--p1), var(--p2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .logo-text { font-size: 20px; font-weight: 700; letter-spacing: .5px; }
+    .logo-text span {
+      background: linear-gradient(90deg, var(--b1), var(--p3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
-    .brand-text p {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
     .badge {
-      margin-left: auto;
-      padding: 5px 12px;
-      background: rgba(167,139,250,0.12);
-      border: 1px solid rgba(167,139,250,0.3);
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--p1);
-      letter-spacing: .5px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; padding: 4px 10px; border-radius: 999px;
+      background: rgba(124,58,237,.2); border: 1px solid rgba(124,58,237,.4);
+      color: var(--b1);
     }
 
-    /* ── メイン ── */
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 48px 20px;
-      gap: 32px;
+    /* ---- ヒーロー ---- */
+    .hero {
+      width: 100%; max-width: 700px;
+      margin-top: 60px; text-align: center;
     }
-
-    .hero-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      font-size: 13px;
-      color: var(--muted);
-      animation: fadeUp .6s ease both;
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--b1); letter-spacing: .8px; text-transform: uppercase;
+      font-family: 'DM Mono', monospace;
+      background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3);
+      padding: 5px 14px; border-radius: 999px; margin-bottom: 24px;
     }
-    .hero-label span { color: var(--p1); font-weight: 600; }
-
-    .hero-title {
-      text-align: center;
-      font-size: clamp(32px, 7vw, 62px);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      animation: fadeUp .7s ease .1s both;
+    .hero-tag::before { content: '●'; font-size: 8px; color: #4ade80; }
+    h1 {
+      font-size: clamp(36px, 8vw, 64px);
+      font-weight: 700; line-height: 1.1; letter-spacing: -1px;
     }
-    .hero-title .grad {
-      background: linear-gradient(90deg, var(--p1) 0%, var(--p2) 50%, var(--p3) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    h1 .grad {
+      background: linear-gradient(90deg, var(--b1) 0%, var(--p3) 50%, #fb923c 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
     .hero-sub {
-      text-align: center;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.7;
-      max-width: 480px;
-      animation: fadeUp .7s ease .18s both;
+      margin-top: 16px; font-size: 16px; color: var(--muted); line-height: 1.7;
     }
 
-    /* ── 検索カード ── */
+    /* ---- 検索カード ---- */
     .search-card {
-      width: 100%;
-      max-width: 680px;
+      margin-top: 44px;
+      width: 100%; max-width: 700px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 24px;
       backdrop-filter: blur(20px);
-      box-shadow: 0 30px 80px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
-      animation: fadeUp .7s ease .25s both;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.4);
     }
 
     .input-wrap {
-      flex: 1;
-      position: relative;
+      display: flex; gap: 10px; flex-wrap: wrap;
     }
-
-    .input-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 17px;
-      pointer-events: none;
+    .input-box {
+      flex: 1; min-width: 240px;
+      display: flex; align-items: center;
+      background: rgba(255,255,255,.06); border: 1px solid var(--border);
+      border-radius: 14px; padding: 0 16px;
+      transition: border-color .2s, box-shadow .2s;
     }
-
+    .input-box:focus-within {
+      border-color: var(--p1);
+      box-shadow: 0 0 0 3px rgba(124,58,237,.25);
+    }
+    .input-icon { color: var(--muted); font-size: 16px; margin-right: 10px; flex-shrink: 0; }
     input[type="text"] {
-      width: 100%;
-      padding: 15px 16px 15px 46px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      color: var(--text);
-      font-size: 15px;
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text); font-size: 15px; padding: 14px 0;
       font-family: inherit;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s, background .2s;
     }
     input[type="text"]::placeholder { color: var(--muted); }
-    input[type="text"]:focus {
-      border-color: var(--p1);
-      background: rgba(167,139,250,0.06);
-      box-shadow: 0 0 0 4px rgba(167,139,250,0.15);
-    }
 
-    .go-btn {
-      flex-shrink: 0;
-      padding: 15px 22px;
-      background: linear-gradient(135deg, var(--p1), var(--p2));
-      border: none;
-      border-radius: 14px;
-      color: #fff;
-      font-size: 15px;
-      font-family: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 8px 24px var(--glow1);
+    .btn-go {
+      padding: 14px 24px; border-radius: 14px; border: none; cursor: pointer;
+      font-size: 15px; font-weight: 600; color: #fff; font-family: inherit;
+      background: linear-gradient(135deg, var(--p1), var(--p3));
+      box-shadow: 0 4px 20px rgba(124,58,237,.45);
+      white-space: nowrap;
       transition: transform .1s, box-shadow .2s;
-      white-space: nowrap;
     }
-    .go-btn:hover { box-shadow: 0 12px 32px var(--glow1); transform: translateY(-1px); }
-    .go-btn:active { transform: translateY(1px); }
+    .btn-go:hover { box-shadow: 0 6px 28px rgba(124,58,237,.65); transform: translateY(-1px); }
+    .btn-go:active { transform: translateY(0); }
 
-    /* ── クイックリンク ── */
-    .quick-label {
-      margin-top: 18px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .chips {
-      margin-top: 10px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
+    /* ---- クイックチップ ---- */
+    .chips-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; font-family: 'DM Mono', monospace; margin: 20px 0 10px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip {
-      padding: 8px 14px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      font-size: 13px;
-      color: var(--text);
-      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--text);
+      background: rgba(255,255,255,.06); border: 1px solid var(--border);
       transition: background .15s, border-color .15s, transform .1s;
-      white-space: nowrap;
     }
     .chip:hover {
-      background: rgba(167,139,250,0.12);
-      border-color: rgba(167,139,250,0.4);
-      transform: translateY(-2px);
+      background: rgba(124,58,237,.2); border-color: rgba(124,58,237,.5); transform: translateY(-1px);
     }
     .chip:active { transform: translateY(0); }
 
-    /* ── 注意書き ── */
-    .note {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 18px;
-      padding: 12px 14px;
-      background: rgba(244,114,182,0.06);
-      border: 1px solid rgba(244,114,182,0.18);
-      border-radius: 12px;
-      font-size: 12.5px;
-      color: var(--muted);
-      line-height: 1.6;
+    /* ---- ステータスバー ---- */
+    .status-bar {
+      margin-top: 20px; padding: 12px 16px;
+      background: rgba(74,222,128,.06); border: 1px solid rgba(74,222,128,.2);
+      border-radius: 12px; display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
     }
-    .note-icon { flex-shrink: 0; font-size: 15px; }
+    .dot-green { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex-shrink: 0; box-shadow: 0 0 8px #4ade80; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{ opacity:1 } 50%{ opacity:.4 } }
 
-    /* ── ステータスバー ── */
-    .stats {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp .7s ease .35s both;
+    /* ---- 特徴カード ---- */
+    .features {
+      width: 100%; max-width: 700px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px; margin-top: 24px;
     }
+    .feat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 18px;
+      backdrop-filter: blur(12px);
+    }
+    .feat-icon { font-size: 22px; margin-bottom: 8px; }
+    .feat-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .feat-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
-    .stat-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 13px;
-    }
-    .stat-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #4ade80;
-      box-shadow: 0 0 8px rgba(74,222,128,0.7);
-      animation: pulse 2s ease infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: .6; transform: scale(.85); }
-    }
-
-    /* ── フッター ── */
+    /* ---- フッタ ---- */
     footer {
-      padding: 20px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      border-top: 1px solid var(--border);
+      margin-top: 48px; text-align: center;
+      font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace;
     }
+    footer a { color: var(--b1); text-decoration: none; }
 
-    /* ── アニメ ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 500px) {
-      .input-row { flex-direction: column; }
-      .go-btn { width: 100%; }
-      .stats { gap: 10px; }
+    @media (max-width: 480px) {
+      .search-card { padding: 18px; }
+      .input-wrap { flex-direction: column; }
+      .btn-go { width: 100%; text-align: center; }
     }
   </style>
 </head>
 <body>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
+  <!-- 背景 -->
+  <div class="bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
 
-<div class="page">
-  <header>
-    <div class="logo-ring">🌊</div>
-    <div class="brand-text">
-      <h1>ProxyWave</h1>
-      <p>どこへでも、プロキシ経由で。</p>
-    </div>
-    <div class="badge">✦ FREE</div>
-  </header>
+  <div class="page">
+    <!-- ヘッダ -->
+    <header>
+      <div class="logo-wrap">
+        <div class="logo-icon">🌐</div>
+        <div class="logo-text"><span>PROXIE</span></div>
+      </div>
+      <div class="badge">v3.0</div>
+    </header>
 
-  <main>
-    <div class="hero-label">🔒 <span>完全プロキシ</span> 経由でブラウジング</div>
+    <!-- ヒーロー -->
+    <section class="hero">
+      <div class="hero-tag">● ONLINE — Proxy Active</div>
+      <h1>
+        どこへでも、<br>
+        <span class="grad">プロキシ経由で。</span>
+      </h1>
+      <p class="hero-sub">
+        URLを入力するだけで、どんなサイトもプロキシ経由で開ける。<br>
+        検索も動画も、ぜんぶここから。
+      </p>
+    </section>
 
-    <h2 class="hero-title">
-      どこへでも、<br><span class="grad">スイスイいける。</span>
-    </h2>
-
-    <p class="hero-sub">
-      URLを入力するだけ。検索も動画も、すべてプロキシ経由で安全にアクセス。ブロックされたサイトも気にしない。
-    </p>
-
+    <!-- 検索カード -->
     <div class="search-card">
-      <form class="input-row" action="/go" method="post" onsubmit="return handleSubmit(event)">
-        <div class="input-wrap">
+      <form class="input-wrap" action="/go" method="post" onsubmit="return handleSubmit(event)">
+        <div class="input-box">
           <span class="input-icon">🔍</span>
-          <input id="q" type="text" name="q" autocomplete="on"
-            placeholder="URLや検索語を入力（例: youtube.com / 天気 東京）" />
+          <input
+            id="q" type="text" name="q" autocomplete="on" autofocus
+            placeholder="URLまたは検索語（例: youtube.com / 天気 東京）"
+          />
         </div>
-        <button class="go-btn" type="submit">Go →</button>
+        <button class="btn-go" type="submit">GO →</button>
       </form>
 
-      <div class="quick-label">クイックアクセス</div>
+      <div class="chips-label">クイックアクセス</div>
       <div class="chips">
-        <div class="chip" onclick="quick('https://ja.wikipedia.org')">📚 Wikipedia</div>
-        <div class="chip" onclick="quick('ニュース 最新')">🗞 ニュース</div>
         <div class="chip" onclick="quick('https://www.youtube.com')">▶️ YouTube</div>
-        <div class="chip" onclick="quick('https://developer.mozilla.org')">🛠 MDN</div>
+        <div class="chip" onclick="quick('https://ja.wikipedia.org')">📚 Wikipedia</div>
+        <div class="chip" onclick="quick('https://www.nicovideo.jp')">🎌 ニコニコ</div>
+        <div class="chip" onclick="quick('https://news.yahoo.co.jp')">🗞 Yahoo!ニュース</div>
+        <div class="chip" onclick="quick('https://www.google.com')">🌏 Google</div>
         <div class="chip" onclick="quick('https://github.com')">🐙 GitHub</div>
-        <div class="chip" onclick="quick('anime おすすめ')">🎌 アニメ</div>
       </div>
 
-      <div class="note">
-        <span class="note-icon">⚠️</span>
-        <span>DRM保護（Netflix等）・ログイン必須サービス・強力なBot対策サイトは動作しない場合があります。一般サイト・動画・検索はそのままOK。</span>
+      <div class="status-bar">
+        <div class="dot-green"></div>
+        <span>プロキシ稼働中 — 通信はすべてプロキシ経由。DRM保護サイト・大手SNSのログインは制限あり。</span>
       </div>
     </div>
 
-    <div class="stats">
-      <div class="stat-item"><div class="stat-dot"></div>プロキシ: オンライン</div>
-      <div class="stat-item">🚀 高速ルーティング中</div>
-      <div class="stat-item">🛡 ヘッダー偽装: 有効</div>
+    <!-- 特徴カード -->
+    <div class="features">
+      <div class="feat">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">高速プロキシ</div>
+        <div class="feat-desc">圧縮・Keep-Alive対応で快適に閲覧できます。</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🛡</div>
+        <div class="feat-title">CSP解除</div>
+        <div class="feat-desc">フレーム制限・セキュリティヘッダを自動で取り除きます。</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🎬</div>
+        <div class="feat-title">動画対応</div>
+        <div class="feat-desc">MP4・HLS動画のシークに対応しています。</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🤖</div>
+        <div class="feat-title">Bot対策回避</div>
+        <div class="feat-desc">ランダムUAとステルスヘッダでBotと判定されにくくします。</div>
+      </div>
     </div>
-  </main>
 
-  <footer>
-    © <span id="year"></span> ProxyWave — Made with 💜 by 하루키
-  </footer>
-</div>
+    <footer>
+      <p>© <span id="yr"></span> PROXIE — made by <strong>하루키</strong></p>
+      <p style="margin-top:6px">一部のサービス（Instagram, Twitter等のSNS・DRMコンテンツ）は動作しません</p>
+    </footer>
+  </div>
 
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-  function quick(text) {
-    const el = document.getElementById('q');
-    el.value = text;
-    el.focus();
-  }
-  function handleSubmit(e) {
-    const el = document.getElementById('q');
-    const v = (el.value || '').trim();
-    if (!v) { el.focus(); return false; }
-    const looksLikeUrl = /^\w+:\/\//i.test(v) || (v.includes('.') && !v.includes(' '));
-    if (looksLikeUrl && !/^\w+:\/\//i.test(v)) { el.value = 'https://' + v; }
-    return true;
-  }
-</script>
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+    function quick(url) {
+      const el = document.getElementById('q');
+      el.value = url;
+      el.focus();
+    }
+    function handleSubmit(e) {
+      const el = document.getElementById('q');
+      const v = (el.value || '').trim();
+      if (!v) { el.focus(); return false; }
+      const looksLikeUrl = /^\w+:\/\//i.test(v) || (v.includes('.') && !v.includes(' '));
+      if (looksLikeUrl && !/^\w+:\/\//i.test(v)) { el.value = 'https://' + v; }
+      return true;
+    }
+  </script>
 </body>
 </html>
