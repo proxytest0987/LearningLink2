@@ -3,322 +3,159 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PROXIE — by 하루키</title>
-  <meta name="theme-color" content="#7c3aed" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <title>Bubble Proxy 🌈 | ずっとプロキシで検索＆視聴</title>
+  <meta name="theme-color" content="#8B7CFF" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
-    :root {
-      --p1: #7c3aed; --p2: #a855f7; --p3: #ec4899;
-      --b1: #c084fc; --b2: #818cf8;
-      --bg: #0a0a0f;
-      --card: rgba(255,255,255,0.04);
-      --border: rgba(255,255,255,0.10);
-      --text: #f1f5f9; --muted: #94a3b8;
+    :root{
+      --bg1:#0f1020; --bg2:#17192e; --card:#14162a; --muted:#9aa3b2; --text:#eef3ff;
+      --grad1:#8B7CFF; --grad2:#FF7CB1; --grad3:#7CFFE3; --btn:#8B7CFF; --chip:#1b1e36; --border:#262a46;
+      --shadow: 0 12px 40px rgba(0,0,0,.35);
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { height: 100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); font-family: ui-sans-serif,-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+      background:
+        radial-gradient(1200px 800px at -10% -10%, rgba(139,124,255,.25), transparent 60%),
+        radial-gradient(1000px 700px at 110% 10%, rgba(255,124,177,.20), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+    }
+    header{padding:20px 16px}
+    .wrap{max-width:980px;margin:0 auto}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: conic-gradient(from 180deg,var(--grad1),var(--grad2),var(--grad3),var(--grad1));
+      box-shadow: 0 10px 26px rgba(139,124,255,.40);
+      position:relative;overflow:hidden;
+    }
+    .logo::after{
+      content:""; position:absolute; inset:2px; border-radius:12px; background:rgba(255,255,255,.06);
+    }
+    h1{margin:0;font-size:20px;letter-spacing:.2px}
+    .sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+    main{padding:16px}
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:20px; padding:20px; box-shadow:var(--shadow);
+    }
+    .hero{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .title{
+      background: linear-gradient(90deg,var(--grad1),var(--grad2),var(--grad3));
+      -webkit-background-clip:text;background-clip:text;color:transparent;font-size:24px;font-weight:800;letter-spacing:.3px
+    }
+    .by{color:var(--muted);font-size:13px}
+    .floaters{position:relative;height:70px;margin-top:6px;overflow:visible}
+    .sticker{
+      position:absolute; font-size:24px; filter: drop-shadow(0 6px 16px rgba(0,0,0,.3));
+      animation: float 6s ease-in-out infinite;
+    }
+    .s1{left:6%; top:10px; animation-delay: .2s}
+    .s2{left:28%; top:0px;  animation-delay: .8s}
+    .s3{left:54%; top:14px; animation-delay: 1.4s}
+    .s4{left:78%; top:2px;  animation-delay: 2.0s}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
-    body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Space Grotesk', system-ui, sans-serif;
-      overflow-x: hidden;
+    .form{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+    input[type="text"]{
+      flex:1; min-width:260px; padding:14px 16px; font-size:16px; color:var(--text);
+      background:#0f1226; border:1px solid var(--border); border-radius:14px; outline:none;
+      transition: box-shadow .15s ease, border-color .15s ease;
     }
+    input[type="text"]::placeholder{color:#8e96ab}
+    input[type="text"]:focus{ border-color:var(--grad2); box-shadow:0 0 0 4px rgba(255,124,177,.20) }
+    button{
+      padding:14px 18px; font-size:16px; border-radius:14px; border:0; cursor:pointer; color:#0d0f1f;
+      background: linear-gradient(180deg, #9a8dff 0%, var(--btn) 100%);
+      box-shadow: 0 10px 22px rgba(139,124,255,.45); transition: transform .05s ease, box-shadow .15s ease;
+      font-weight:700;
+    }
+    button:hover{ box-shadow: 0 12px 26px rgba(139,124,255,.60) }
+    button:active{ transform: translateY(1px) }
 
-    /* ---- 背景アニメ ---- */
-    .bg-orbs {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
-    }
-    .orb {
-      position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55;
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-    .orb1 { width: 600px; height: 600px; background: radial-gradient(circle, #7c3aed, transparent 70%); top: -200px; left: -200px; animation-duration: 20s; }
-    .orb2 { width: 500px; height: 500px; background: radial-gradient(circle, #ec4899, transparent 70%); bottom: -150px; right: -150px; animation-duration: 25s; animation-delay: -8s; }
-    .orb3 { width: 350px; height: 350px; background: radial-gradient(circle, #06b6d4, transparent 70%); top: 40%; left: 50%; transform: translate(-50%,-50%); animation-duration: 17s; animation-delay: -4s; opacity: .3; }
-    @keyframes drift {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(30px, 40px) scale(1.05); }
-    }
-
-    /* ---- グリッドノイズ ---- */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-    }
-
-    /* ---- レイアウト ---- */
-    .page {
-      position: relative; z-index: 1;
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 0 16px 60px;
-    }
-
-    /* ---- ヘッダ ---- */
-    header {
-      width: 100%; max-width: 700px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 28px 0 0;
-    }
-    .logo-wrap { display: flex; align-items: center; gap: 10px; }
-    .logo-icon {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--p1), var(--p3));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; flex-shrink: 0;
-      box-shadow: 0 0 20px rgba(124,58,237,.5);
-    }
-    .logo-text { font-size: 20px; font-weight: 700; letter-spacing: .5px; }
-    .logo-text span {
-      background: linear-gradient(90deg, var(--b1), var(--p3));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .badge {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px; padding: 4px 10px; border-radius: 999px;
-      background: rgba(124,58,237,.2); border: 1px solid rgba(124,58,237,.4);
-      color: var(--b1);
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .chip{
+      padding:10px 12px;border-radius:999px;border:1px dashed var(--border);
+      background: var(--chip); color:#dfe7ff; font-size:13px; cursor:pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,.18);
     }
 
-    /* ---- ヒーロー ---- */
-    .hero {
-      width: 100%; max-width: 700px;
-      margin-top: 60px; text-align: center;
-    }
-    .hero-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12px; color: var(--b1); letter-spacing: .8px; text-transform: uppercase;
-      font-family: 'DM Mono', monospace;
-      background: rgba(124,58,237,.15); border: 1px solid rgba(124,58,237,.3);
-      padding: 5px 14px; border-radius: 999px; margin-bottom: 24px;
-    }
-    .hero-tag::before { content: '●'; font-size: 8px; color: #4ade80; }
-    h1 {
-      font-size: clamp(36px, 8vw, 64px);
-      font-weight: 700; line-height: 1.1; letter-spacing: -1px;
-    }
-    h1 .grad {
-      background: linear-gradient(90deg, var(--b1) 0%, var(--p3) 50%, #fb923c 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero-sub {
-      margin-top: 16px; font-size: 16px; color: var(--muted); line-height: 1.7;
-    }
+    .cols{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
+    @media(min-width:840px){ .cols{grid-template-columns:1.3fr .7fr} }
 
-    /* ---- 検索カード ---- */
-    .search-card {
-      margin-top: 44px;
-      width: 100%; max-width: 700px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 24px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.4);
-    }
+    .panel{background:#11142b;border:1px solid var(--border);border-radius:16px;padding:14px}
+    .panel h3{margin:0 0 8px;font-size:15px;color:#cfd6ff}
+    .panel p,.hint{color:#9aa3b2;font-size:13px;line-height:1.7;margin:8px 0 0}
 
-    .input-wrap {
-      display: flex; gap: 10px; flex-wrap: wrap;
-    }
-    .input-box {
-      flex: 1; min-width: 240px;
-      display: flex; align-items: center;
-      background: rgba(255,255,255,.06); border: 1px solid var(--border);
-      border-radius: 14px; padding: 0 16px;
-      transition: border-color .2s, box-shadow .2s;
-    }
-    .input-box:focus-within {
-      border-color: var(--p1);
-      box-shadow: 0 0 0 3px rgba(124,58,237,.25);
-    }
-    .input-icon { color: var(--muted); font-size: 16px; margin-right: 10px; flex-shrink: 0; }
-    input[type="text"] {
-      flex: 1; background: transparent; border: none; outline: none;
-      color: var(--text); font-size: 15px; padding: 14px 0;
-      font-family: inherit;
-    }
-    input[type="text"]::placeholder { color: var(--muted); }
-
-    .btn-go {
-      padding: 14px 24px; border-radius: 14px; border: none; cursor: pointer;
-      font-size: 15px; font-weight: 600; color: #fff; font-family: inherit;
-      background: linear-gradient(135deg, var(--p1), var(--p3));
-      box-shadow: 0 4px 20px rgba(124,58,237,.45);
-      white-space: nowrap;
-      transition: transform .1s, box-shadow .2s;
-    }
-    .btn-go:hover { box-shadow: 0 6px 28px rgba(124,58,237,.65); transform: translateY(-1px); }
-    .btn-go:active { transform: translateY(0); }
-
-    /* ---- クイックチップ ---- */
-    .chips-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; font-family: 'DM Mono', monospace; margin: 20px 0 10px; }
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-    .chip {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 14px; border-radius: 999px; cursor: pointer;
-      font-size: 13px; font-weight: 500; color: var(--text);
-      background: rgba(255,255,255,.06); border: 1px solid var(--border);
-      transition: background .15s, border-color .15s, transform .1s;
-    }
-    .chip:hover {
-      background: rgba(124,58,237,.2); border-color: rgba(124,58,237,.5); transform: translateY(-1px);
-    }
-    .chip:active { transform: translateY(0); }
-
-    /* ---- ステータスバー ---- */
-    .status-bar {
-      margin-top: 20px; padding: 12px 16px;
-      background: rgba(74,222,128,.06); border: 1px solid rgba(74,222,128,.2);
-      border-radius: 12px; display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--muted);
-    }
-    .dot-green { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex-shrink: 0; box-shadow: 0 0 8px #4ade80; animation: pulse 2s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{ opacity:1 } 50%{ opacity:.4 } }
-
-    /* ---- 特徴カード ---- */
-    .features {
-      width: 100%; max-width: 700px;
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px; margin-top: 24px;
-    }
-    .feat {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 18px;
-      backdrop-filter: blur(12px);
-    }
-    .feat-icon { font-size: 22px; margin-bottom: 8px; }
-    .feat-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-    .feat-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
-
-    /* ---- フッタ ---- */
-    footer {
-      margin-top: 48px; text-align: center;
-      font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace;
-    }
-    footer a { color: var(--b1); text-decoration: none; }
-
-    @media (max-width: 480px) {
-      .search-card { padding: 18px; }
-      .input-wrap { flex-direction: column; }
-      .btn-go { width: 100%; text-align: center; }
-    }
+    footer{text-align:center;color:#8993aa;font-size:12px;padding:22px}
+    a.inline{color:#c9d2ff;text-decoration:underline dotted}
   </style>
 </head>
 <body>
-  <!-- 背景 -->
-  <div class="bg-orbs">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-  </div>
-
-  <div class="page">
-    <!-- ヘッダ -->
-    <header>
-      <div class="logo-wrap">
-        <div class="logo-icon">🌐</div>
-        <div class="logo-text"><span>PROXIE</span></div>
+  <header>
+    <div class="wrap brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Bubble Proxy</h1>
+        <p class="sub">検索もリンクも、ずっとプロキシ経由で。</p>
       </div>
-      <div class="badge">v3.0</div>
-    </header>
+    </div>
+  </header>
 
-    <!-- ヒーロー -->
-    <section class="hero">
-      <div class="hero-tag">● ONLINE — Proxy Active</div>
-      <h1>
-        どこへでも、<br>
-        <span class="grad">プロキシ経由で。</span>
-      </h1>
-      <p class="hero-sub">
-        URLを入力するだけで、どんなサイトもプロキシ経由で開ける。<br>
-        検索も動画も、ぜんぶここから。
-      </p>
-    </section>
-
-    <!-- 検索カード -->
-    <div class="search-card">
-      <form class="input-wrap" action="/go" method="post" onsubmit="return handleSubmit(event)">
-        <div class="input-box">
-          <span class="input-icon">🔍</span>
-          <input
-            id="q" type="text" name="q" autocomplete="on" autofocus
-            placeholder="URLまたは検索語（例: youtube.com / 天気 東京）"
-          />
+  <main>
+    <div class="wrap card">
+      <div class="hero">
+        <div>
+          <div class="title">はやい・かわいい・ぜんぶプロキシ。</div>
+          <div class="floaters">
+            <div class="sticker s1">🫧</div>
+            <div class="sticker s2">🌈</div>
+            <div class="sticker s3">🎧</div>
+            <div class="sticker s4">🎬</div>
+          </div>
         </div>
-        <button class="btn-go" type="submit">GO →</button>
+        <div class="by">制作: <b>하루키</b></div>
+      </div>
+
+      <form class="form" action="/go" method="post" onsubmit="return handleSubmit(event)">
+        <input id="q" type="text" name="q" autocomplete="on"
+               placeholder="URL または 検索語（例: https://example.com / 琵琶湖 観光 / 動画 テスト）" />
+        <button type="submit">いってみる 🚀</button>
       </form>
 
-      <div class="chips-label">クイックアクセス</div>
       <div class="chips">
-        <div class="chip" onclick="quick('https://www.youtube.com')">▶️ YouTube</div>
         <div class="chip" onclick="quick('https://ja.wikipedia.org')">📚 Wikipedia</div>
-        <div class="chip" onclick="quick('https://www.nicovideo.jp')">🎌 ニコニコ</div>
-        <div class="chip" onclick="quick('https://news.yahoo.co.jp')">🗞 Yahoo!ニュース</div>
-        <div class="chip" onclick="quick('https://www.google.com')">🌏 Google</div>
-        <div class="chip" onclick="quick('https://github.com')">🐙 GitHub</div>
+        <div class="chip" onclick="quick('ゲームニュース')">🎮 ゲーム</div>
+        <div class="chip" onclick="quick('動画 テスト')">🎬 動画テスト</div>
+        <div class="chip" onclick="quick('https://developer.mozilla.org')">🛠 MDN</div>
       </div>
 
-      <div class="status-bar">
-        <div class="dot-green"></div>
-        <span>プロキシ稼働中 — 通信はすべてプロキシ経由。DRM保護サイト・大手SNSのログインは制限あり。</span>
+      <div class="cols">
+        <section class="panel">
+          <h3>つかいかた</h3>
+          <p>上のボックスにURLかキーワードを入れて「いってみる」。以降のページ遷移や検索も、ずっとプロキシ経由です。</p>
+          <p class="hint">メモ: 一部サービス（DRMや厳格なボット対策、ログイン前提のサイトなど）は仕様上ひらけない場合があります。</p>
+        </section>
+        <section class="panel">
+          <h3>ヒント</h3>
+          <p>重いページは通信環境や相手サイトの状況で時間がかかることがあります。しばらく待って再読み込みしてみてね。</p>
+        </section>
       </div>
     </div>
+  </main>
 
-    <!-- 特徴カード -->
-    <div class="features">
-      <div class="feat">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-title">高速プロキシ</div>
-        <div class="feat-desc">圧縮・Keep-Alive対応で快適に閲覧できます。</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">🛡</div>
-        <div class="feat-title">CSP解除</div>
-        <div class="feat-desc">フレーム制限・セキュリティヘッダを自動で取り除きます。</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">🎬</div>
-        <div class="feat-title">動画対応</div>
-        <div class="feat-desc">MP4・HLS動画のシークに対応しています。</div>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">🤖</div>
-        <div class="feat-title">Bot対策回避</div>
-        <div class="feat-desc">ランダムUAとステルスヘッダでBotと判定されにくくします。</div>
-      </div>
-    </div>
-
-    <footer>
-      <p>© <span id="yr"></span> PROXIE — made by <strong>하루키</strong></p>
-      <p style="margin-top:6px">一部のサービス（Instagram, Twitter等のSNS・DRMコンテンツ）は動作しません</p>
-    </footer>
-  </div>
+  <footer>
+    © <span id="year"></span> Haruki. All rights reserved.
+  </footer>
 
   <script>
-    document.getElementById('yr').textContent = new Date().getFullYear();
-    function quick(url) {
-      const el = document.getElementById('q');
-      el.value = url;
-      el.focus();
-    }
-    function handleSubmit(e) {
-      const el = document.getElementById('q');
-      const v = (el.value || '').trim();
-      if (!v) { el.focus(); return false; }
+    document.getElementById('year').textContent = new Date().getFullYear();
+    function quick(text){ const el = document.getElementById('q'); el.value = text; el.focus(); }
+    function handleSubmit(e){
+      const el = document.getElementById('q'); const v = (el.value || '').trim();
+      if(!v){ el.focus(); return false; }
       const looksLikeUrl = /^\w+:\/\//i.test(v) || (v.includes('.') && !v.includes(' '));
-      if (looksLikeUrl && !/^\w+:\/\//i.test(v)) { el.value = 'https://' + v; }
+      if(looksLikeUrl && !/^\w+:\/\//i.test(v)){ el.value = 'https://' + v; }
       return true;
     }
   </script>
