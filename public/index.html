@@ -3,81 +3,84 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bubble Proxy 🌈 | ずっとプロキシで検索＆視聴</title>
-  <meta name="theme-color" content="#8B7CFF" />
+  <title>Bubble Surf 🌈 | なんでも検索もリンクもプロキシで</title>
+  <meta name="theme-color" content="#7C9BFF" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
     :root{
-      --bg1:#0f1020; --bg2:#17192e; --card:#14162a; --muted:#9aa3b2; --text:#eef3ff;
-      --grad1:#8B7CFF; --grad2:#FF7CB1; --grad3:#7CFFE3; --btn:#8B7CFF; --chip:#1b1e36; --border:#262a46;
-      --shadow: 0 12px 40px rgba(0,0,0,.35);
+      --bg1:#0c0f1e; --bg2:#111632; --card:#121630; --border:#252b4a;
+      --text:#f2f6ff; --muted:#a6b0c7;
+      --g1:#7C9BFF; --g2:#FF7CB1; --g3:#7CFFE3; --btn:#7C9BFF;
+      --chip:#171c3a; --shadow:0 18px 50px rgba(0,0,0,.40);
+      --pill:#0e1330; --ok:#76ffa6;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; color:var(--text); font-family: ui-sans-serif,-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
       background:
-        radial-gradient(1200px 800px at -10% -10%, rgba(139,124,255,.25), transparent 60%),
-        radial-gradient(1000px 700px at 110% 10%, rgba(255,124,177,.20), transparent 55%),
+        radial-gradient(1200px 800px at -10% -10%, rgba(124,155,255,.28), transparent 60%),
+        radial-gradient(1000px 700px at 110% 10%, rgba(255,124,177,.22), transparent 55%),
         linear-gradient(180deg, var(--bg1), var(--bg2));
     }
-    header{padding:20px 16px}
+    header{padding:22px 16px}
     .wrap{max-width:980px;margin:0 auto}
     .brand{display:flex;align-items:center;gap:12px}
     .logo{
-      width:44px;height:44px;border-radius:14px;
-      background: conic-gradient(from 180deg,var(--grad1),var(--grad2),var(--grad3),var(--grad1));
-      box-shadow: 0 10px 26px rgba(139,124,255,.40);
-      position:relative;overflow:hidden;
+      width:46px;height:46px;border-radius:16px;position:relative;overflow:hidden;
+      background: conic-gradient(from 180deg,var(--g1),var(--g2),var(--g3),var(--g1));
+      box-shadow: 0 12px 30px rgba(124,155,255,.45);
     }
-    .logo::after{content:""; position:absolute; inset:2px; border-radius:12px; background:rgba(255,255,255,.06);}
+    .logo::after{content:"";position:absolute;inset:2px;border-radius:14px;background:rgba(255,255,255,.07)}
     h1{margin:0;font-size:20px;letter-spacing:.2px}
     .sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+
     main{padding:16px}
-    .card{background:var(--card); border:1px solid var(--border); border-radius:20px; padding:20px; box-shadow:var(--shadow);}
-    .hero{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:22px; padding:22px; box-shadow:var(--shadow);}
+    .hero{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
     .title{
-      background: linear-gradient(90deg,var(--grad1),var(--grad2),var(--grad3));
-      -webkit-background-clip:text;background-clip:text;color:transparent;font-size:24px;font-weight:800;letter-spacing:.3px
+      background: linear-gradient(90deg,var(--g1),var(--g2),var(--g3));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      font-size:24px;font-weight:900;letter-spacing:.3px
     }
-    .by{color:var(--muted);font-size:13px}
-    .floaters{position:relative;height:70px;margin-top:6px;overflow:visible}
-    .sticker{position:absolute; font-size:24px; filter: drop-shadow(0 6px 16px rgba(0,0,0,.3)); animation: float 6s ease-in-out infinite;}
-    .s1{left:6%; top:10px; animation-delay: .2s}
-    .s2{left:28%; top:0px;  animation-delay: .8s}
-    .s3{left:54%; top:14px; animation-delay: 1.4s}
-    .s4{left:78%; top:2px;  animation-delay: 2.0s}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .float{position:relative;height:70px;margin-top:8px}
+    .st{position:absolute;font-size:28px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.3));animation:up 6s ease-in-out infinite}
+    .s1{left:6%; top:10px;animation-delay:.2s}
+    .s2{left:30%;top:0;  animation-delay:.9s}
+    .s3{left:56%;top:14px;animation-delay:1.6s}
+    .s4{left:80%;top:4px; animation-delay:2.2s}
+    @keyframes up{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
     .form{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
     input[type="text"]{
-      flex:1; min-width:260px; padding:14px 16px; font-size:16px; color:var(--text);
-      background:#0f1226; border:1px solid var(--border); border-radius:14px; outline:none;
+      flex:1; min-width:260px; padding:15px 16px; font-size:16px; color:var(--text);
+      background:#0e1433; border:1px solid var(--border); border-radius:16px; outline:none;
       transition: box-shadow .15s ease, border-color .15s ease;
     }
     input[type="text"]::placeholder{color:#8e96ab}
-    input[type="text"]:focus{ border-color:var(--grad2); box-shadow:0 0 0 4px rgba(255,124,177,.20) }
+    input[type="text"]:focus{ border-color:var(--g2); box-shadow:0 0 0 5px rgba(255,124,177,.22) }
     button{
-      padding:14px 18px; font-size:16px; border-radius:14px; border:0; cursor:pointer; color:#0d0f1f;
-      background: linear-gradient(180deg, #9a8dff 0%, var(--btn) 100%);
-      box-shadow: 0 10px 22px rgba(139,124,255,.45); transition: transform .05s ease, box-shadow .15s ease; font-weight:700;
+      padding:15px 18px; font-size:16px; border-radius:16px; border:0; cursor:pointer; color:#0d0f1f;
+      background: linear-gradient(180deg, #8aa4ff 0%, var(--btn) 100%);
+      box-shadow: 0 12px 26px rgba(124,155,255,.50); transition: transform .05s ease, box-shadow .15s ease; font-weight:800;
     }
-    button:hover{ box-shadow: 0 12px 26px rgba(139,124,255,.60) }
+    button:hover{ box-shadow: 0 14px 28px rgba(124,155,255,.65) }
     button:active{ transform: translateY(1px) }
 
     .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     .chip{
       padding:10px 12px;border-radius:999px;border:1px dashed var(--border);
-      background: var(--chip); color:#dfe7ff; font-size:13px; cursor:pointer;
+      background: var(--chip); color:#e9efff; font-size:13px; cursor:pointer;
       box-shadow: 0 6px 16px rgba(0,0,0,.18);
     }
 
     .cols{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
-    @media(min-width:840px){ .cols{grid-template-columns:1.3fr .7fr} }
-
-    .panel{background:#11142b;border:1px solid var(--border);border-radius:16px;padding:14px}
+    @media(min-width:860px){ .cols{grid-template-columns:1.3fr .7fr} }
+    .panel{background:#0f1434;border:1px solid var(--border);border-radius:16px;padding:14px}
     .panel h3{margin:0 0 8px;font-size:15px;color:#cfd6ff}
     .panel p,.hint{color:#9aa3b2;font-size:13px;line-height:1.7;margin:8px 0 0}
+
+    .pill{display:inline-flex;align-items:center;gap:8px;background:var(--pill);border:1px solid var(--border);padding:8px 12px;border-radius:999px;color:#cfe0ff;font-size:12px}
 
     footer{text-align:center;color:#8993aa;font-size:12px;padding:22px}
   </style>
@@ -87,7 +90,7 @@
     <div class="wrap brand">
       <div class="logo" aria-hidden="true"></div>
       <div>
-        <h1>Bubble Proxy</h1>
+        <h1>Bubble Surf</h1>
         <p class="sub">検索もリンクも、ずっとプロキシ経由で。</p>
       </div>
     </div>
@@ -97,26 +100,26 @@
     <div class="wrap card">
       <div class="hero">
         <div>
-          <div class="title">はやい・かわいい・ぜんぶプロキシ。</div>
-          <div class="floaters">
-            <div class="sticker s1">🫧</div>
-            <div class="sticker s2">🌈</div>
-            <div class="sticker s3">🎧</div>
-            <div class="sticker s4">🎬</div>
+          <div class="title">はやい・かわいい・迷わない。</div>
+          <div class="float">
+            <div class="st s1">🫧</div>
+            <div class="st s2">🎮</div>
+            <div class="st s3">🎬</div>
+            <div class="st s4">📚</div>
           </div>
         </div>
-        <div class="by">制作: <b>하루키</b></div>
+        <div class="pill">制作: <b>하루키</b> / <span style="color:var(--ok)">online</span></div>
       </div>
 
       <form class="form" action="/go" method="post" onsubmit="return handleSubmit(event)">
         <input id="q" type="text" name="q" autocomplete="on"
-               placeholder="URL または 検索語（例: https://example.com / 琵琶湖 観光 / 動画 テスト）" />
+               placeholder="URL または 検索語（例: https://example.com / スプラ3 情報 / 動画 テスト）" />
         <button type="submit">いってみる 🚀</button>
       </form>
 
       <div class="chips">
         <div class="chip" onclick="quick('https://ja.wikipedia.org')">📚 Wikipedia</div>
-        <div class="chip" onclick="quick('ゲームニュース')">🎮 ゲーム</div>
+        <div class="chip" onclick="quick('ニュース')">🗞 ニュース</div>
         <div class="chip" onclick="quick('動画 テスト')">🎬 動画テスト</div>
         <div class="chip" onclick="quick('https://developer.mozilla.org')">🛠 MDN</div>
       </div>
@@ -124,12 +127,12 @@
       <div class="cols">
         <section class="panel">
           <h3>つかいかた</h3>
-          <p>上のボックスにURLかキーワードを入れて「いってみる」。以降のページ遷移や検索も、ずっとプロキシ経由です。</p>
-          <p class="hint">メモ: 一部サービス（DRMや厳格なボット対策、ログイン前提のサイトなど）は仕様上ひらけない場合があります。</p>
+          <p>上のボックスにURLかキーワード→「いってみる」。ページ遷移も検索も、ずっとプロキシ経由で続きます。</p>
+          <p class="hint">メモ: DRMや厳格なボット対策のサイト、ログイン必須の巨大サービスは動かない/不安定な場合があります。</p>
         </section>
         <section class="panel">
           <h3>ヒント</h3>
-          <p>重いページは通信環境や相手サイトの状況で時間がかかることがあります。しばらく待って再読み込みしてみてね。</p>
+          <p>重いページは読み込みに時間かかることがあります。少し待ってから再読み込みしてね。</p>
         </section>
       </div>
     </div>
