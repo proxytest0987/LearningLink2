@@ -3,138 +3,126 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bubble Surf 🌈 | なんでも検索もリンクもプロキシで</title>
-  <meta name="theme-color" content="#7C9BFF" />
+  <title>Bubble Proxy — ぜんぶプロキシで</title>
+  <meta name="theme-color" content="#7a6cff" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
     :root{
-      --bg1:#0c0f1e; --bg2:#111632; --card:#121630; --border:#252b4a;
-      --text:#f2f6ff; --muted:#a6b0c7;
-      --g1:#7C9BFF; --g2:#FF7CB1; --g3:#7CFFE3; --btn:#7C9BFF;
-      --chip:#171c3a; --shadow:0 18px 50px rgba(0,0,0,.40);
-      --pill:#0e1330; --ok:#76ffa6;
+      --bg:#0c0f1a; --panel:#0f1422; --glass:#11182a99;
+      --text:#e9edff; --muted:#a8b0d6;
+      --accent:#7a6cff; --accent2:#00e0ff; --accent3:#ff79c6;
+      --border:#1f2840; --shadow: 0 12px 40px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; color:var(--text); font-family: ui-sans-serif,-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+      margin:0; font-family: ui-sans-serif,-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--text);
       background:
-        radial-gradient(1200px 800px at -10% -10%, rgba(124,155,255,.28), transparent 60%),
-        radial-gradient(1000px 700px at 110% 10%, rgba(255,124,177,.22), transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
+        radial-gradient(900px 600px at 10% -10%, #7a6cff22, transparent 60%),
+        radial-gradient(800px 500px at 110% 10%, #00e0ff22, transparent 55%),
+        linear-gradient(180deg, #0b0f19, #0e1322);
+      overflow-y: overlay;
     }
-    header{padding:22px 16px}
+    header{padding:20px 16px}
     .wrap{max-width:980px;margin:0 auto}
     .brand{display:flex;align-items:center;gap:12px}
-    .logo{
-      width:46px;height:46px;border-radius:16px;position:relative;overflow:hidden;
-      background: conic-gradient(from 180deg,var(--g1),var(--g2),var(--g3),var(--g1));
-      box-shadow: 0 12px 30px rgba(124,155,255,.45);
-    }
-    .logo::after{content:"";position:absolute;inset:2px;border-radius:14px;background:rgba(255,255,255,.07)}
-    h1{margin:0;font-size:20px;letter-spacing:.2px}
-    .sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .logo{width:44px;height:44px}
+    .titles h1{margin:0;font-size:20px;letter-spacing:.2px}
+    .titles p{margin:4px 0 0;color:var(--muted);font-size:13px}
 
     main{padding:16px}
-    .card{background:var(--card); border:1px solid var(--border); border-radius:22px; padding:22px; box-shadow:var(--shadow);}
-    .hero{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
-    .title{
-      background: linear-gradient(90deg,var(--g1),var(--g2),var(--g3));
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-      font-size:24px;font-weight:900;letter-spacing:.3px
+    .card{
+      border:1px solid var(--border); border-radius:20px; padding:20px; background:linear-gradient(180deg,#0f1526,#0b1020);
+      box-shadow:var(--shadow); position:relative; overflow:hidden;
     }
-    .float{position:relative;height:70px;margin-top:8px}
-    .st{position:absolute;font-size:28px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.3));animation:up 6s ease-in-out infinite}
-    .s1{left:6%; top:10px;animation-delay:.2s}
-    .s2{left:30%;top:0;  animation-delay:.9s}
-    .s3{left:56%;top:14px;animation-delay:1.6s}
-    .s4{left:80%;top:4px; animation-delay:2.2s}
-    @keyframes up{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .glow1,.glow2{
+      position:absolute; filter:blur(60px); opacity:.35; transform:translateZ(0);
+    }
+    .glow1{top:-120px;left:-60px;width:260px;height:260px;background:#7a6cff}
+    .glow2{bottom:-140px;right:-40px;width:280px;height:280px;background:#00e0ff}
 
-    .form{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+    .hero{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .heroLeft{display:flex;align-items:center;gap:12px}
+    .badge{font-size:12px;color:#141827;background:#9cf;border-radius:999px;padding:4px 8px;color:#0a0d18}
+    .hero h2{margin:0;font-size:22px;letter-spacing:.2px}
+    .by{color:var(--muted);font-size:13px}
+    .by b{color:#fff}
+
+    .form{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
     input[type="text"]{
-      flex:1; min-width:260px; padding:15px 16px; font-size:16px; color:var(--text);
-      background:#0e1433; border:1px solid var(--border); border-radius:16px; outline:none;
+      flex:1;min-width:260px;padding:14px 16px;font-size:16px;color:var(--text);
+      background:linear-gradient(180deg,#0e1528,#0a1020); border:1px solid var(--border); border-radius:14px; outline:none;
       transition: box-shadow .15s ease, border-color .15s ease;
     }
-    input[type="text"]::placeholder{color:#8e96ab}
-    input[type="text"]:focus{ border-color:var(--g2); box-shadow:0 0 0 5px rgba(255,124,177,.22) }
+    input[type="text"]::placeholder{color:var(--muted)}
+    input[type="text"]:focus{ border-color:#2e3b74; box-shadow:0 0 0 4px #7a6cff33 }
+
     button{
-      padding:15px 18px; font-size:16px; border-radius:16px; border:0; cursor:pointer; color:#0d0f1f;
-      background: linear-gradient(180deg, #8aa4ff 0%, var(--btn) 100%);
-      box-shadow: 0 12px 26px rgba(124,155,255,.50); transition: transform .05s ease, box-shadow .15s ease; font-weight:800;
+      padding:14px 18px;font-size:16px;border-radius:14px;border:0;cursor:pointer;
+      background:linear-gradient(135deg, var(--accent), var(--accent3), var(--accent2));
+      color:#0b0f19; font-weight:700; letter-spacing:.3px;
+      box-shadow: 0 10px 24px rgba(122,108,255,.35); transition: transform .05s ease, box-shadow .15s ease;
     }
-    button:hover{ box-shadow: 0 14px 28px rgba(124,155,255,.65) }
+    button:hover{ box-shadow:0 12px 28px rgba(122,108,255,.5) }
     button:active{ transform: translateY(1px) }
 
     .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     .chip{
-      padding:10px 12px;border-radius:999px;border:1px dashed var(--border);
-      background: var(--chip); color:#e9efff; font-size:13px; cursor:pointer;
-      box-shadow: 0 6px 16px rgba(0,0,0,.18);
+      padding:9px 12px;border-radius:12px;border:1px dashed var(--border);
+      background:var(--glass); backdrop-filter: blur(8px);
+      color:var(--text); font-size:13px; cursor:pointer;
     }
 
-    .cols{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
-    @media(min-width:860px){ .cols{grid-template-columns:1.3fr .7fr} }
-    .panel{background:#0f1434;border:1px solid var(--border);border-radius:16px;padding:14px}
-    .panel h3{margin:0 0 8px;font-size:15px;color:#cfd6ff}
-    .panel p,.hint{color:#9aa3b2;font-size:13px;line-height:1.7;margin:8px 0 0}
-
-    .pill{display:inline-flex;align-items:center;gap:8px;background:var(--pill);border:1px solid var(--border);padding:8px 12px;border-radius:999px;color:#cfe0ff;font-size:12px}
-
-    footer{text-align:center;color:#8993aa;font-size:12px;padding:22px}
+    .hint{margin-top:14px;color:var(--muted);font-size:13px;line-height:1.6}
+    footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
+    .sparkle{animation:pop .9s ease both}
+    @keyframes pop{0%{transform:scale(.96);opacity:.4}70%{transform:scale(1.02);opacity:1}100%{transform:scale(1)}}
   </style>
 </head>
 <body>
   <header>
     <div class="wrap brand">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <h1>Bubble Surf</h1>
-        <p class="sub">検索もリンクも、ずっとプロキシ経由で。</p>
+      <img class="logo" src="/favicon.svg" alt="logo">
+      <div class="titles">
+        <h1>Bubble Proxy</h1>
+        <p>検索もリンクも、ぜんぶプロキシ経由で。</p>
       </div>
     </div>
   </header>
 
   <main>
-    <div class="wrap card">
-      <div class="hero">
-        <div>
-          <div class="title">はやい・かわいい・迷わない。</div>
-          <div class="float">
-            <div class="st s1">🫧</div>
-            <div class="st s2">🎮</div>
-            <div class="st s3">🎬</div>
-            <div class="st s4">📚</div>
+    <div class="wrap">
+      <section class="card sparkle">
+        <div class="glow1" aria-hidden="true"></div>
+        <div class="glow2" aria-hidden="true"></div>
+
+        <div class="hero">
+          <div class="heroLeft">
+            <span class="badge">NEW</span>
+            <h2>ネオンでかるく、使って速い。</h2>
           </div>
+          <div class="by">made by <b>Haruki</b></div>
         </div>
-        <div class="pill">制作: <b>하루키</b> / <span style="color:var(--ok)">online</span></div>
-      </div>
 
-      <form class="form" action="/go" method="post" onsubmit="return handleSubmit(event)">
-        <input id="q" type="text" name="q" autocomplete="on"
-               placeholder="URL または 検索語（例: https://example.com / スプラ3 情報 / 動画 テスト）" />
-        <button type="submit">いってみる 🚀</button>
-      </form>
+        <form class="form" action="/go" method="post" onsubmit="return handleSubmit(event)">
+          <input id="q" type="text" name="q" autocomplete="on"
+                 placeholder="URL または 検索語（例: https://example.com / 琵琶湖 観光 / 動画 テスト）" />
+          <button type="submit">いってみる ✨</button>
+        </form>
 
-      <div class="chips">
-        <div class="chip" onclick="quick('https://ja.wikipedia.org')">📚 Wikipedia</div>
-        <div class="chip" onclick="quick('ニュース')">🗞 ニュース</div>
-        <div class="chip" onclick="quick('動画 テスト')">🎬 動画テスト</div>
-        <div class="chip" onclick="quick('https://developer.mozilla.org')">🛠 MDN</div>
-      </div>
+        <div class="chips">
+          <div class="chip" onclick="quick('https://ja.wikipedia.org')">📚 Wikipedia</div>
+          <div class="chip" onclick="quick('ニュース')">🗞 ニュース</div>
+          <div class="chip" onclick="quick('動画 テスト')">🎬 動画テスト</div>
+          <div class="chip" onclick="quick('https://developer.mozilla.org')">🛠 MDN</div>
+        </div>
 
-      <div class="cols">
-        <section class="panel">
-          <h3>つかいかた</h3>
-          <p>上のボックスにURLかキーワード→「いってみる」。ページ遷移も検索も、ずっとプロキシ経由で続きます。</p>
-          <p class="hint">メモ: DRMや厳格なボット対策のサイト、ログイン必須の巨大サービスは動かない/不安定な場合があります。</p>
-        </section>
-        <section class="panel">
-          <h3>ヒント</h3>
-          <p>重いページは読み込みに時間かかることがあります。少し待ってから再読み込みしてね。</p>
-        </section>
-      </div>
+        <p class="hint">
+          注意: DRMや強いBot対策/ログイン必須のサービスは、プロキシ仕様上うまく動かない場合があります。<br/>
+          通常のWebサイト・画像・MP4/HLS・検索はこのまま使えます。
+        </p>
+      </section>
     </div>
   </main>
 
